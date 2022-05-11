@@ -73,6 +73,11 @@ export interface PinoLokiOptionsContract {
   }
 
   /**
+   * extract labels in Loki log data
+   */
+  labelsInLog?: string[]
+
+  /**
    * Basic auth credentials to be used when sending logs to Loki
    */
   basicAuth?: {

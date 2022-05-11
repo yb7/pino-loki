@@ -26,12 +26,18 @@ export class LogBuilder {
   public build(
     log: PinoLog,
     replaceTimestamp?: boolean,
-    additionalLabels?: Record<string, string>
+    additionalLabels?: Record<string, string>,
+    labelsInLog?: string[]
   ): LokiLog {
     const hostname = log.hostname
     const status = this.statusFromLevel(log.level)
 
     delete log.hostname
+    const labels: any = {}
+    for (const label of labelsInLog || []) {
+      labels[label] = log[label]
+      delete log[label]
+    }
 
     let time = (log.time * 1000000).toString()
     if (replaceTimestamp) {
@@ -43,6 +49,7 @@ export class LogBuilder {
         level: status,
         hostname,
         ...additionalLabels,
+        ...labels,
       },
       values: [[time, JSON.stringify(log)]],
     }
